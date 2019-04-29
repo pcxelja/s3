@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+
+  appPython:
+    image: python
+    networks:
+      main:
+       aliases:
+         - dataBase
+    volumes:
+      - "./app:/app"
+    container_name: appPython         
+    depends_on:
+      - "dataBase"
+    command: bash -c "echo '###################### INSTALACJA '"
+    command: bash -c "sudo apt-get install python-mysqldb"
+    command: bash -c "pip install mysql-python && pip install mysqldb"
+    entrypoint:
+      - app/entrypoint.sh
+
+  dataBase:
+    image: centos/mysql-56-centos7
+    networks:
+      main:
+       aliases:
+         - appPython
+    container_name: dataBase
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pass
+      - MYSQL_DATABASE=baseS3
+    
+networks:
+  main:
